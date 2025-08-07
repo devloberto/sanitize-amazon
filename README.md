@@ -25,7 +25,7 @@ The number of features will increase over time._
 ## Usage
 
 1. Browse Amazon as you are used to.
-2. Open links like of a product by right clicking the product and clicking "sanitize amazon link" in the context menu.
+2. Open links like of a product by right clicking the product and clicking **sanitize amazon: open clean link** in the context menu.
 3. The product opens in a new tab without all the dirty tracking stuff in the URL.
 4. Enjoy your improved privacy.
 
