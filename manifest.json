@@ -11,6 +11,7 @@
     "service_worker": "background.js"
   },
   "host_permissions": [
-    "*://www.amazon.de/*"
+    "https://www.amazon.de/*",
+    "https://www.amazon.com/*"
   ]
 }
