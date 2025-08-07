@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Sanitize Amazon Sponsored Link",
+  "name": "Sanitize Amazon",
   "version": "1.0",
   "permissions": [
     "contextMenus",

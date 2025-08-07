@@ -1,6 +1,7 @@
 # sanitize-amazon
 
-**a browser addon that cleans amazon URLs when browsing amazon's web store to protect you from tracking**
+**`sanitize-amazon` is a browser extension that cleans amazon URLs when browsing amazon's web store to protect you from tracking.**
+This addon is a nice little helper if you take care of your privacy.
 
 ## Note
 
