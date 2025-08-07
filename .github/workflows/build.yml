@@ -13,9 +13,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check out code into the Go module directory
+      - name: git checkout
         uses: actions/checkout@v4
-      - name: Set up go-crx3
+      - name: setup go-crx3
         run: |
           wget https://github.com/mmadfox/go-crx3/releases/download/v1.6.0/go-crx3_1.6.0_linux_amd64.tar.gz
           tar xvf go-crx3_1.6.0_linux_amd64.tar.gz
