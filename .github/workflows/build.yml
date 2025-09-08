@@ -18,7 +18,8 @@ jobs:
         run: |
           wget https://github.com/mmadfox/go-crx3/releases/download/v1.6.0/go-crx3_1.6.0_linux_amd64.tar.gz
           tar xvf go-crx3_1.6.0_linux_amd64.tar.gz
-          chmod +x go-crx3 && mv go-crx3 $HOME/.local/bin/
+          chmod +x go-crx3
+          mv go-crx3 /usr/local/bin/
       - name: build extension
         run: make build-chrome
       - name: upload artifacts
@@ -30,6 +31,9 @@ jobs:
   build_firefox:
     name: build firefox addon
     runs-on: ubuntu-latest
+    env:
+      AMO_JWT_ISSUER: ${{ secrets.AMO_JWT_ISSUER }}
+      AMO_JWT_SECRET: ${{ secrets.AMO_JWT_SECRET }}
     steps:
       - name: git checkout
         uses: actions/checkout@v4
@@ -37,7 +41,8 @@ jobs:
         run: |
           wget https://github.com/mmadfox/go-crx3/releases/download/v1.6.0/go-crx3_1.6.0_linux_amd64.tar.gz
           tar xvf go-crx3_1.6.0_linux_amd64.tar.gz
-          chmod +x go-crx3 && mv go-crx3 $HOME/.local/bin/
+          chmod +x go-crx3
+          mv go-crx3 /usr/local/bin/
       - name: build addon
         run: make build-firefox
       - name: setup node
@@ -47,20 +52,20 @@ jobs:
       - name: install web-ext
         run: npm i -g web-ext
       - name: sign with AMO (if secrets provided)
-        if: ${{ secrets.AMO_JWT_ISSUER && secrets.AMO_JWT_SECRET }}
+        if: ${{ env.AMO_JWT_ISSUER != '' && env.AMO_JWT_SECRET != '' }}
         env:
           WEB_EXT_API_KEY: ${{ secrets.AMO_JWT_ISSUER }}
           WEB_EXT_API_SECRET: ${{ secrets.AMO_JWT_SECRET }}
         run: |
           web-ext sign \
-            --api-key "$WEB_EXT_API_KEY" \
-            --api-secret "$WEB_EXT_API_SECRET" \
+            --api-key "$AMO_JWT_ISSUER" \
+            --api-secret "$AMO_JWT_SECRET" \
             --channel listed
             --id sanitize-amazon@devloberto \
             --source-dir . \
             --artifacts-dir ./web-ext-artifacts
       - name: upload signed crx artifact
-        if: ${{ secrets.AMO_JWT_ISSUER && secrets.AMO_JWT_SECRET }}
+        if: ${{ env.AMO_JWT_ISSUER != '' && env.AMO_JWT_SECRET != '' }}
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.ARTIFACT_NAME }}_firefox
