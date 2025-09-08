@@ -18,16 +18,23 @@ The number of features will increase over time._
 ## Browser support
 
 - Chromium-based browser
-- _TODO: Firefox (not yet implemented)_
+- Firefox (MV3)
 
 ## Installation
 
 _Note: You need to activate the development mode to install this extension
 at the moment._
 
-1. Download the `sanitize-amazon` artifact from the last build workflow,
-2. extract the `.crx` file from the downloaded zip file
-3. and drag-and-drop the `sanitize-amazon.crx` to your browser's extension view.
+1. Download the `sanitize-amazon` artifact from the last build workflow.
+
+Chromium:
+2. Extract the `.crx` file from the downloaded artifact
+3. Drag-and-drop `sanitize-amazon.crx` into your browser's extensions page.
+
+Firefox:
+2. Extract the `sanitize-amazon_firefox.zip`
+3. In Firefox open `about:debugging` → This Firefox → Load Temporary Add-on…
+4. Select `manifest.json` from the project folder (or the extracted zip).
 
 ## Usage
 

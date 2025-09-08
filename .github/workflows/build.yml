@@ -8,10 +8,9 @@ env:
   ARTIFACT_NAME: ${{ github.ref_name == 'master' && 'sanitize-amazon' || format('sanitize-amazon_{0}_{1}', github.ref_name, github.run_started_at) }}
 
 jobs:
-  build:
-    name: build crx
+  build-chrome:
+    name: build chrome extension
     runs-on: ubuntu-latest
-
     steps:
       - name: git checkout
         uses: actions/checkout@v4
@@ -19,11 +18,50 @@ jobs:
         run: |
           wget https://github.com/mmadfox/go-crx3/releases/download/v1.6.0/go-crx3_1.6.0_linux_amd64.tar.gz
           tar xvf go-crx3_1.6.0_linux_amd64.tar.gz
-          chmod +x go-crx3
-          # TODO: use `-p key.pem` to sign crx by private key
-          ./go-crx3 pack "$PWD" -o "$PWD/sanitize-amazon.crx"
+          chmod +x go-crx3 && mv go-crx3 $HOME/.local/bin/
+      - name: build extension
+        run: make build-chrome
       - name: upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.ARTIFACT_NAME }}
+          name: ${{ env.ARTIFACT_NAME }}_chrome
           path: "sanitize-amazon.crx"
+
+  build_firefox:
+    name: build firefox addon
+    runs-on: ubuntu-latest
+    steps:
+      - name: git checkout
+        uses: actions/checkout@v4
+      - name: setup go-crx3
+        run: |
+          wget https://github.com/mmadfox/go-crx3/releases/download/v1.6.0/go-crx3_1.6.0_linux_amd64.tar.gz
+          tar xvf go-crx3_1.6.0_linux_amd64.tar.gz
+          chmod +x go-crx3 && mv go-crx3 $HOME/.local/bin/
+      - name: build addon
+        run: make build-firefox
+      - name: setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: install web-ext
+        run: npm i -g web-ext
+      - name: sign with AMO (if secrets provided)
+        if: ${{ secrets.AMO_JWT_ISSUER && secrets.AMO_JWT_SECRET }}
+        env:
+          WEB_EXT_API_KEY: ${{ secrets.AMO_JWT_ISSUER }}
+          WEB_EXT_API_SECRET: ${{ secrets.AMO_JWT_SECRET }}
+        run: |
+          web-ext sign \
+            --api-key "$WEB_EXT_API_KEY" \
+            --api-secret "$WEB_EXT_API_SECRET" \
+            --channel listed
+            --id sanitize-amazon@devloberto \
+            --source-dir . \
+            --artifacts-dir ./web-ext-artifacts
+      - name: upload signed crx artifact
+        if: ${{ secrets.AMO_JWT_ISSUER && secrets.AMO_JWT_SECRET }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.ARTIFACT_NAME }}_firefox
+          path: web-ext-artifacts/*.crx
