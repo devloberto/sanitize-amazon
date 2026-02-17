@@ -10,6 +10,10 @@
   "background": {
     "service_worker": "background.js"
   },
+  "action": {
+    "default_title": "Sanitize Amazon",
+    "default_popup": "popup.html"
+  },
   "host_permissions": [
     "https://www.amazon.de/*",
     "https://www.amazon.com/*"
